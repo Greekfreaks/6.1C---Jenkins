@@ -1,18 +1,28 @@
 pipeline {
     agent any
 
-    stages { 
+    stages {
         stage('Build') {
             steps {
                 echo 'Building the project...'
                 echo 'Tool: Maven'
             }
         }
-        
+
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running Unit and Integration Tests...'
                 echo 'Tools: JUnit, TestNG'
+                sh 'echo "Unit and Integration Tests logs..." > unit_integration_tests.log'
+            }
+            post {
+                always {
+                    echo 'Sending notification email for Unit and Integration Tests...'
+                    mail to: 'alucas.bros@gmail.com',
+                         subject: "Unit and Integration Tests Stage Completed: ${currentBuild.currentResult}",
+                         body: "Stage: Unit and Integration Tests\nStatus: ${currentBuild.currentResult}",
+                         attachmentsPattern: 'unit_integration_tests.log'
+                }
             }
         }
 
@@ -27,6 +37,16 @@ pipeline {
             steps {
                 echo 'Performing security scan...'
                 echo 'Tool: OWASP ZAP'
+                sh 'echo "Security Scan logs..." > security_scan.log'
+            }
+            post {
+                always {
+                    echo 'Sending notification email for Security Scan...'
+                    mail to: 'your_email@example.com',
+                         subject: "Security Scan Stage Completed: ${currentBuild.currentResult}",
+                         body: "Stage: Security Scan\nStatus: ${currentBuild.currentResult}",
+                         attachmentsPattern: 'security_scan.log'
+                }
             }
         }
 
@@ -49,15 +69,6 @@ pipeline {
                 echo 'Deploying to Production server...'
                 echo 'Deploying to AWS EC2 instance'
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Sending notification emails...'
-            mail to: 'alucas.bros@gmail.com',
-                 subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
-                 body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
         }
     }
 }

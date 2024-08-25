@@ -17,11 +17,18 @@ pipeline {
             }
             post {
                 always {
-                    echo 'Sending notification email for Unit and Integration Tests...'
-                    mail to: 'alucas.bros@gmail.com',
-                         subject: "Unit and Integration Tests Stage Completed: ${currentBuild.currentResult}",
-                         body: "Stage: Unit and Integration Tests\nStatus: ${currentBuild.currentResult}",
-                         attachmentsPattern: 'unit_integration_tests.log'
+                    script {
+                        def logs = readFile('unit_integration_tests.log')
+                        echo 'Sending notification email for Unit and Integration Tests...'
+                        mail to: 'alucas.bros@gmail.com',
+                             subject: "Unit and Integration Tests Stage Completed: ${currentBuild.currentResult}",
+                             body: """Stage: Unit and Integration Tests
+Status: ${currentBuild.currentResult}
+
+Logs:
+${logs}
+"""
+                    }
                 }
             }
         }
@@ -41,11 +48,18 @@ pipeline {
             }
             post {
                 always {
-                    echo 'Sending notification email for Security Scan...'
-                    mail to: 'your_email@example.com',
-                         subject: "Security Scan Stage Completed: ${currentBuild.currentResult}",
-                         body: "Stage: Security Scan\nStatus: ${currentBuild.currentResult}",
-                         attachmentsPattern: 'security_scan.log'
+                    script {
+                        def logs = readFile('security_scan.log')
+                        echo 'Sending notification email for Security Scan...'
+                        mail to: 'alucas.bros@gmail.com',
+                             subject: "Security Scan Stage Completed: ${currentBuild.currentResult}",
+                             body: """Stage: Security Scan
+Status: ${currentBuild.currentResult}
+
+Logs:
+${logs}
+"""
+                    }
                 }
             }
         }

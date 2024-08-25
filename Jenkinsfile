@@ -1,50 +1,63 @@
 pipeline {
     agent any
 
-    environment {
-        DIRECTORY_PATH = '/path/to/code' // Replace with actual path
-        TESTING_ENVIRONMENT = 'testing-env'
-        PRODUCTION_ENVIRONMENT = 'Alexader Lucas'
-    }
-
     stages {
         stage('Build') {
             steps {
-                echo "Fetching the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
-                echo "Compiling the code and generating any necessary artifacts"
+                echo 'Building the project...'
+                echo 'Tool: Maven'
             }
         }
 
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit tests'
-                echo 'Running integration tests'
+                echo 'Running Unit and Integration Tests...'
+                echo 'Tools: JUnit, TestNG'
             }
         }
 
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
-                echo 'Checking the quality of the code'
+                echo 'Analyzing code quality...'
+                echo 'Tool: SonarQube'
             }
         }
 
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
-                echo "Deploying the application to the testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
+                echo 'Performing security scan...'
+                echo 'Tool: OWASP ZAP'
             }
         }
 
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                echo 'waiting for approval'
-                sleep(time: 10, unit: 'SECONDS')
+                echo 'Deploying to Staging server...'
+                echo 'Deploying to AWS EC2 instance'
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on staging...'
+                echo 'Integration Tests on Staging'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo "Deploying the code to the production environment specified by the environment variable: ${env.PRODUCTION_ENVIRONMENT}"
+                echo 'Deploying to Production server...'
+                echo 'Deploying to AWS EC2 instance'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Sending notification emails...'
+            mail to: 'alucas.bros@gmail.com',
+                 subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
+                 body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
         }
     }
 }

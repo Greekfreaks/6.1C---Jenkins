@@ -9,13 +9,6 @@ pipeline {
             }
         }
 
-        stage('Unit and Integration Tests') {
-            steps {
-                echo 'Running Unit and Integration Tests...'
-                echo 'Tools: JUnit, TestNG'
-            }
-        }
-
         stage('Code Analysis') {
             steps {
                 echo 'Analyzing code quality...'

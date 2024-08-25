@@ -12,7 +12,6 @@ pipeline {
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running Unit and Integration Tests...'
-                // Placeholder for test automation tools like JUnit and TestNG
                 echo 'Tools: JUnit, TestNG'
             }
         }

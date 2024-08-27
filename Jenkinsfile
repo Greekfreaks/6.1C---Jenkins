@@ -10,11 +10,24 @@ pipeline {
         }
 
         stage('Unit and Integration Tests') {
-            steps {
-                echo 'Running Unit and Integration Tests...'
-                echo 'Tools: JUnit, TestNG'
+    steps {
+        echo 'Running Unit and Integration Tests...'
+        echo 'Tools: JUnit, TestNG'
+    }
+    post {
+        always {
+            script {
+                def logs = currentBuild.rawBuild.getLog(100).join("\n")
+                writeFile file: 'unit_tests.log', text: logs
             }
+            echo 'Sending notification emails...'
+            mail to: 'alucas.bros@gmail.com',
+                 subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
+                 body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}",
+                 attachments: 'unit_tests.log'
         }
+    }
+}
 
         stage('Code Analysis') {
             steps {
@@ -24,11 +37,24 @@ pipeline {
         }
 
         stage('Security Scan') {
-            steps {
-                echo 'Performing security scan...'
-                echo 'Tool: OWASP ZAP'
+    steps {
+        echo 'Performing security scan...'
+        echo 'Tool: OWASP ZAP'
+    }
+    post {
+        always {
+            script {
+                def logs = currentBuild.rawBuild.getLog(100).join("\n")
+                writeFile file: 'security_scan.log', text: logs
             }
+            echo 'Sending notification emails...'
+            mail to: 'alucas.bros@gmail.com',
+                 subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
+                 body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}",
+                 attachments: 'security_scan.log'
         }
+    }
+}
 
         stage('Deploy to Staging') {
             steps {

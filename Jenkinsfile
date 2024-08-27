@@ -16,17 +16,12 @@ pipeline {
             }
             post {
                 always {
-                    script {
-                        def logs = currentBuild.rawBuild.getLog(100).join("\n")
-                        writeFile file: 'unit_tests.log', text: logs
-                    }
+                    echo 'Archiving unit test logs...'
+                    archiveArtifacts artifacts: 'unit_tests.log', allowEmptyArchive: true
                     echo 'Sending notification emails...'
-                    emailext(
-                        to: 'alucas.bros@gmail.com',
-                        subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
-                        body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}",
-                        attachmentsPattern: 'unit_tests.log'
-                    )
+                    mail to: 'alucas.bros@gmail.com',
+                         subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
+                         body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
                 }
             }
         }
@@ -45,17 +40,12 @@ pipeline {
             }
             post {
                 always {
-                    script {
-                        def logs = currentBuild.rawBuild.getLog(100).join("\n")
-                        writeFile file: 'security_scan.log', text: logs
-                    }
+                    echo 'Archiving security scan logs...'
+                    archiveArtifacts artifacts: 'security_scan.log', allowEmptyArchive: true
                     echo 'Sending notification emails...'
-                    emailext(
-                        to: 'alucas.bros@gmail.com',
-                        subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
-                        body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}",
-                        attachmentsPattern: 'security_scan.log'
-                    )
+                    mail to: 'alucas.bros@gmail.com',
+                         subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
+                         body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
                 }
             }
         }
@@ -84,12 +74,10 @@ pipeline {
 
     post {
         always {
-            echo 'Sending notification emails...'
-            emailext(
-                to: 'alucas.bros@gmail.com',
-                subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
-                body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
-            )
+            echo 'Sending final notification emails...'
+            mail to: 'alucas.bros@gmail.com',
+                 subject: "Pipeline Completed: ${currentBuild.currentResult}",
+                 body: "Pipeline completed with status: ${currentBuild.currentResult}"
         }
     }
 }

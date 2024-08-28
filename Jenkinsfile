@@ -5,34 +5,72 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                // Build steps here
+                echo 'Tool: Maven'
             }
         }
+
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running Unit and Integration Tests...'
-                // Unit test steps here
-                script {
-                    // Capture the logs
-                    def unitTestLog = sh(script: 'cat unit_test_logs.txt', returnStdout: true).trim()
-                    
-                    // Send email with log included in the body
+                echo 'Tools: JUnit, TestNG'
+            }
+            post {
+                always {
+                    echo 'Archiving unit test logs...'
+                    archiveArtifacts artifacts: 'unit_tests.log', allowEmptyArchive: true
+                    echo 'Sending notification emails...'
                     mail to: 'alucas.bros@gmail.com',
                          subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
-                         body: """Stage: ${env.STAGE_NAME}
-Status: ${currentBuild.currentResult}
-Log:
-${unitTestLog}
-"""
+                         body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
                 }
             }
         }
+
         stage('Code Analysis') {
             steps {
                 echo 'Analyzing code quality...'
-                // Code analysis steps here
+                echo 'Tool: SonarQube'
             }
         }
-        // Add more stages as necessary...
+
+        stage('Security Scan') {
+            steps {
+                echo 'Performing security scan...'
+                echo 'Tool: OWASP ZAP'
+            }
+            post {
+                always {
+                    echo 'Archiving security scan logs...'
+                    archiveArtifacts artifacts: 'security_scan.log', allowEmptyArchive: true
+                    echo 'Sending notification emails...'
+                    mail to: 'alucas.bros@gmail.com',
+                         subject: "Pipeline Stage Completed: ${currentBuild.currentResult}",
+                         body: "Stage: ${env.STAGE_NAME}\nStatus: ${currentBuild.currentResult}"
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying to Staging server...'
+                echo 'Deploying to AWS EC2 instance'
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on staging...'
+                echo 'Integration Tests on Staging'
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying to Production server...'
+                echo 'Deploying to AWS EC2 instance'
+            }
+        }
     }
+
+    // Removed the final post block to avoid sending the third email.
 }

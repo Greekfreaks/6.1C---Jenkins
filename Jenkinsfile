@@ -71,13 +71,3 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            echo 'Sending final notification emails...'
-            mail to: 'alucas.bros@gmail.com',
-                 subject: "Pipeline Completed: ${currentBuild.currentResult}",
-                 body: "Pipeline completed with status: ${currentBuild.currentResult}"
-        }
-    }
-}

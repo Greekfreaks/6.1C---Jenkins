@@ -7,7 +7,6 @@ pipeline {
                     to: 'alucas.bros@gmail.com',
                     subject: 'Test Email from Jenkins',
                     body: 'This is a test email to check the system.',
-                    attachLog: true
                 )
             }
         }
